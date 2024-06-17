@@ -59,14 +59,14 @@ float dist(int i, int j, int x, int y){
     return distance;
 }
 
-void get_neighbours(pair <int, int> posn){
+void get_neighbours(block A){
     neighbours.clear();
-    for(int i = posn.first - 1; i <= posn.first + 1; i++){
-        for(int j = posn.second - 1; j <= posn.second + 1; j++){
+    for(int i = A.position.first - 1; i <= A.position.first + 1; i++){
+        for(int j = A.position.second - 1; j <= A.position.second + 1; j++){
             if(can_go(i, j)){
-                int f_c = dist(i, j, start_x, start_y) + dist(i, j, final_x, final_y);
+                int f_c = dist(i, j, A.parent.first, A.parent.second) + dist(i, j, final_x, final_y);
                 pair <int, int> pos = make_pair(i, j);
-                pair <int, int> prt = posn;
+                pair <int, int> prt = A.position;
                 neighbours.push_back(block(f_c, pos, prt));
             }
         }
@@ -107,7 +107,7 @@ bool compare_fc(block A, block B){
 
 void find_path(block start, block final){
     //cout << start.position.first <<" "<<start.position.second <<endl;
-    get_neighbours(start.position);
+    get_neighbours(start);
     closed.push_back(open.at(0));
     open.erase(open.begin());
     for(auto &neighbour: neighbours){
