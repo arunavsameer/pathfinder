@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        ".fantomasignore": "ignore",
+        "*.rdf": "html",
+        "*.java": "java",
+        "*.cpp": "cpp",
+        "iterator": "cpp",
+        "cmath": "cpp"
+    }
+}

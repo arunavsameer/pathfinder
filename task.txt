@@ -1,0 +1,5 @@
+get neighbours of the node
+choose the neighbour with lowest f_c and add it to closed
+if neighbours of this neighbour is in open and f_c is lower from this node: update parent and f_c
+else if neighbour not in open: add it in open
+repeat until end found
