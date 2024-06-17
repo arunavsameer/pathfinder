@@ -51,7 +51,7 @@ bool can_go(int i, int j){
     return (maze[i][j] == ' ' || maze[i][j] == 'e') ? true : false;
 }
 
-float dist(int i, int j, int x, int y){
+int dist(int i, int j, int x, int y){
     int base = abs(y - j);
     int hgt = abs(x - i);
     float distance = sqrt((base * base) + (hgt * hgt));
@@ -64,7 +64,7 @@ void get_neighbours(block A){
     for(int i = A.position.first - 1; i <= A.position.first + 1; i++){
         for(int j = A.position.second - 1; j <= A.position.second + 1; j++){
             if(can_go(i, j)){
-                int f_c = dist(i, j, A.parent.first, A.parent.second) + dist(i, j, final_x, final_y);
+                int f_c = dist(i, j,A.parent.first, A.parent.second) + dist(i, j, final_x, final_y);
                 pair <int, int> pos = make_pair(i, j);
                 pair <int, int> prt = A.position;
                 neighbours.push_back(block(f_c, pos, prt));
@@ -105,24 +105,27 @@ bool compare_fc(block A, block B){
     return (A.f_cost > B.f_cost) ? 0 : 1;
 }
 
-void find_path(block start, block final){
-    //cout << start.position.first <<" "<<start.position.second <<endl;
-    get_neighbours(start);
-    closed.push_back(open.at(0));
-    open.erase(open.begin());
-    for(auto &neighbour: neighbours){
-        //cout << neighbour.position.first << " "<<neighbour.position.second <<endl;
-        if(neighbour.position == final.position){
-            return;
-        }
 
+
+void find_path(block final){
+    
+    block current = open.at(0);
+    cout << current.position.first <<" "<<current.position.second <<endl;
+    open.erase(open.begin());
+    closed.push_back(current);
+    if(current.position == final.position){
+        return;
+    }
+    get_neighbours(current);
+    for(auto neighbour: neighbours){
         block* found_open = find(neighbour, open);
         block* found_closed = find(neighbour, closed);
         //neighbour found in open
         if(found_open != nullptr){
-            if(found_open -> position > neighbour.position){
+            if(found_open -> f_cost > neighbour.f_cost){
                 found_open -> f_cost = neighbour.f_cost;
-                found_open -> parent = neighbour.parent;
+                found_open -> position = neighbour.position;
+                found_open -> parent = current.position;
             }
         }
         //neighbour not found in closed and open
@@ -132,7 +135,7 @@ void find_path(block start, block final){
     }
     sort(open.begin(), open.end(), compare_fc);
     //cout << open.at(0).position.first <<" "<<open.at(0).position.second <<endl;
-    find_path(open.at(0), final);
+    find_path(final);
 }
 
 pair <int, int>  parent(pair <int, int> posn){
@@ -144,7 +147,7 @@ pair <int, int>  parent(pair <int, int> posn){
 }
 
 void add_path(){
-    pair <int, int>  current = closed.at(closed.size() - 1).position;
+    pair <int, int>  current = closed.at(closed.size() - 2).position;
     while(current != make_pair(start_x, start_y)){
         maze[current.first][current.second] = '*';
         current = parent(current);
@@ -164,14 +167,12 @@ int main(){
     final_x = *ptr; ptr++;
     final_y = *ptr;
     
-    pair <int, int> S, F;
-    S = make_pair(start_x, start_y);
-    F = make_pair(final_x, final_y);
+    pair <int, int> S = make_pair(start_x, start_y);
+    pair <int, int> F = make_pair(final_x, final_y);
     block start(0, S, S);
-    open.push_back(start);
     block final(0, F, F);
-
-    find_path(start, final);
+    open.push_back(start);
+    find_path(final);
     add_path();
     print_maze();
 }
