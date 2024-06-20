@@ -27,9 +27,9 @@ struct block{
 
 char maze[height][width];
 block grid[height][width];
-vector <block*> open;
-vector <block*> closed;
-vector <block*> neighbours;
+list <block*> open;
+list <block*> closed;
+list <block*> neighbours;
 block *start, *finish;
 
 bool in_open(block* A){
@@ -121,11 +121,11 @@ int* get_points(){
 
 void find_path(){
     sort(open.begin(), open.end(), compare_fc);
-    block* current = open.at(0);
+    block* current = open.front();
     if(current == finish){
         return;
     }
-    open.erase(open.begin());
+    open.pop_front();
     closed.push_back(current);
     get_neighbours(current -> position);
     for(auto & neighbour: neighbours){
@@ -161,4 +161,5 @@ int main(){
 
     start = &grid[start_x][start_y];
     finish = &grid[final_x][final_y];
+    find_path();
 }
