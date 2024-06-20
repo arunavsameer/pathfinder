@@ -10,27 +10,14 @@ struct block{
     int g_cost = INT_MAX;
     int h_cost = 0;
     block* parent = nullptr;
-
-    block(){
-        position = make_pair(0, 0);
-    }
-    block(pair <int, int> posn){
-        position = posn;
-    }
-    block(pair <int, int> posn, int g_c, int h_c, block* p){
-        position = posn;
-        g_cost = g_c;
-        h_cost = h_c;
-        parent = p;
-    }
 };
 
 char maze[height][width];
-block grid[height][width];
-list <block*> open;
-list <block*> closed;
-list <block*> neighbours;
-block *start, *finish;
+static block grid[height][width];
+vector <block*> open;
+vector <block*> closed;
+vector <block*> neighbours;
+block *start, *finish ;
 
 bool in_open(block* A){
     for(auto i: open){
@@ -67,7 +54,7 @@ void get_maze(){
 void reset_grid(){
     for(int i = 0; i < height; i++){
         for(int j = 0; j < width; j++){
-            grid[i][j] = block(make_pair(i, j));
+            grid[i][j].position = (make_pair(i, j));
         }
     }
 }
@@ -86,8 +73,8 @@ int dist(pair <int, int> A, pair <int, int> B){
 
 void get_neighbours(pair <int, int> position){
     neighbours.clear();
-    for(int i = max(0, i - 1); i < min(height, i + 1); i++){
-        for(int j = max(0, j - 1); j < min(width, j + 1); j++){
+    for(int i = max(0, position.first - 1); i < min(height, position.first + 1); i++){
+        for(int j = max(0, position.second - 1); j < min(width, position.second + 1); j++){
             pair <int, int> posn = make_pair(i, j);
             if(can_go(posn)){
                 neighbours.push_back(&grid[i][j]);
@@ -96,8 +83,8 @@ void get_neighbours(pair <int, int> position){
     }
 }
 
-bool compare_fc(block &A, block &B){
-    return ((A.g_cost + A.h_cost) > (B.g_cost + B.h_cost)) ? 0 : 1;
+bool compare_fc(block *A, block *B){
+    return ((A -> g_cost + A -> h_cost) > (B -> g_cost + B -> h_cost)) ? 0 : 1;
 }
 
 int* get_points(){
@@ -121,13 +108,14 @@ int* get_points(){
 
 void find_path(){
     sort(open.begin(), open.end(), compare_fc);
-    block* current = open.front();
+    block* current = open.at(0);
     if(current == finish){
         return;
     }
-    open.pop_front();
+    open.erase(open.begin());
     closed.push_back(current);
     get_neighbours(current -> position);
+    cout << neighbours.size() <<endl;
     for(auto & neighbour: neighbours){
         if(in_open(neighbour)){
             if((current -> g_cost + dist(neighbour->position, current->position)) < neighbour -> g_cost){
@@ -146,9 +134,19 @@ void find_path(){
     find_path();
 }
 
+void print_maze(){
+    for(int i = 0; i < height; i++){
+        for(int j = 0; j < width; j++){
+            cout << maze[i][j];
+        }
+        cout << endl;
+    }
+}
+
 int main(){
     reset_grid();
     get_maze();
+    print_maze();
     open.clear();
     closed.clear();
     neighbours.clear();
@@ -161,5 +159,6 @@ int main(){
 
     start = &grid[start_x][start_y];
     finish = &grid[final_x][final_y];
+    open.push_back(start);
     find_path();
 }
