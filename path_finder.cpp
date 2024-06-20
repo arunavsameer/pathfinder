@@ -7,7 +7,7 @@ using namespace std;
 
 struct block{
     pair <int, int> position;
-    int g_cost = INT_MAX;
+    int g_cost = 0;
     int h_cost = 0;
     block* parent = nullptr;
 };
@@ -68,15 +68,15 @@ int dist(pair <int, int> A, pair <int, int> B){
     int hgt = abs(B.first - A.first);
     float distance = sqrt((base * base) + (hgt * hgt));
     int h = (distance * 10);
-    return distance;
+    return h;
 }
 
 void get_neighbours(pair <int, int> position){
     neighbours.clear();
-    for(int i = max(0, position.first - 1); i < min(height, position.first + 1); i++){
-        for(int j = max(0, position.second - 1); j < min(width, position.second + 1); j++){
+    for(int i = position.first - 1; i <= position.first + 1; i++){
+        for(int j = position.second - 1; j <= position.second + 1; j++){
             pair <int, int> posn = make_pair(i, j);
-            if(can_go(posn)){
+            if(can_go(posn) && !(i == position.first && j == position.second)){
                 neighbours.push_back(&grid[i][j]);
             }
         }
@@ -84,7 +84,7 @@ void get_neighbours(pair <int, int> position){
 }
 
 bool compare_fc(block *A, block *B){
-    return ((A -> g_cost + A -> h_cost) > (B -> g_cost + B -> h_cost)) ? 0 : 1;
+    return ((A -> g_cost + A -> h_cost) >= (B -> g_cost + B -> h_cost)) ? 0 : 1;
 }
 
 int* get_points(){
@@ -107,15 +107,20 @@ int* get_points(){
 }
 
 void find_path(){
+    //cout << open.size() <<" : ";
+    // for(auto i: open){
+    //     cout << i->g_cost + i -> h_cost <<" ";
+    // }
     sort(open.begin(), open.end(), compare_fc);
     block* current = open.at(0);
     if(current == finish){
         return;
     }
+    //cout << " : ";
+    //cout << current->position.first <<" "<<current->position.second <<" "<< current->g_cost <<endl;
     open.erase(open.begin());
     closed.push_back(current);
     get_neighbours(current -> position);
-    cout << neighbours.size() <<endl;
     for(auto & neighbour: neighbours){
         if(in_open(neighbour)){
             if((current -> g_cost + dist(neighbour->position, current->position)) < neighbour -> g_cost){
@@ -132,6 +137,22 @@ void find_path(){
         }
     }
     find_path();
+}
+
+pair <int, int>  parent(pair <int, int> posn){
+    for(auto i: closed){
+        if(i -> position == posn){
+            return i -> parent->position;
+        }
+    }
+}
+
+void add_path(){
+    block* current = closed.at(closed.size() - 1);
+    while(current -> position != start -> position){
+        maze[current-> position.first][current->position.second] = '*';
+        current = current -> parent;
+    }
 }
 
 void print_maze(){
@@ -159,6 +180,11 @@ int main(){
 
     start = &grid[start_x][start_y];
     finish = &grid[final_x][final_y];
+    start -> g_cost = 0;
+    start -> parent = nullptr;
     open.push_back(start);
     find_path();
+    cout << "path found: " <<endl;
+    add_path();
+    print_maze();
 }

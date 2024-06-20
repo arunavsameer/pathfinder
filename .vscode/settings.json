@@ -5,6 +5,10 @@
         "*.java": "java",
         "*.cpp": "cpp",
         "iterator": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "iostream": "cpp",
+        "deque": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp"
     }
 }

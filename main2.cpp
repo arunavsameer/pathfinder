@@ -63,7 +63,7 @@ void get_neighbours(block A){
     neighbours.clear();
     for(int i = A.position.first - 1; i <= A.position.first + 1; i++){
         for(int j = A.position.second - 1; j <= A.position.second + 1; j++){
-            if(can_go(i, j)){
+            if(can_go(i, j) && !(i == A.position.first && j == A.position.second)){
                 int f_c = dist(i, j,A.parent.first, A.parent.second) + dist(i, j, final_x, final_y);
                 pair <int, int> pos = make_pair(i, j);
                 pair <int, int> prt = A.position;
