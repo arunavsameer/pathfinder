@@ -144,7 +144,7 @@ pair <int, int>  parent(pair <int, int> posn){
         if(i -> position == posn){
             return i -> parent->position;
         }
-    }
+    return make_pair(0, 0);
 }
 
 void add_path(){
