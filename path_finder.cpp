@@ -107,17 +107,11 @@ int* get_points(){
 }
 
 void find_path(){
-    //cout << open.size() <<" : ";
-    // for(auto i: open){
-    //     cout << i->g_cost + i -> h_cost <<" ";
-    // }
     sort(open.begin(), open.end(), compare_fc);
     block* current = open.at(0);
     if(current == finish){
         return;
     }
-    //cout << " : ";
-    //cout << current->position.first <<" "<<current->position.second <<" "<< current->g_cost <<endl;
     open.erase(open.begin());
     closed.push_back(current);
     get_neighbours(current -> position);
@@ -168,6 +162,7 @@ void print_maze(){
 int main(){
     reset_grid();
     get_maze();
+    cout << "maze: " <<endl;
     print_maze();
     open.clear();
     closed.clear();

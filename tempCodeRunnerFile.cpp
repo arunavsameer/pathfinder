@@ -1,1 +1,2 @@
-&& !(i == A.position.first && j == A.position.second)
+<< " : ";
+    cout <<
