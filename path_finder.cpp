@@ -2,8 +2,8 @@
 #include <fstream>
 using namespace std;
 
-#define height 8
-#define width 20
+#define height 12
+#define width 30
 
 struct block{
     pair <int, int> position;
