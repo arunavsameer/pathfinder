@@ -13,6 +13,7 @@ struct block{
 };
 
 char maze[height][width];
+int a = 0;
 static block grid[height][width];
 vector <block*> open;
 vector <block*> closed;
@@ -133,7 +134,7 @@ void find_path(){
     find_path();
 }
 
-pair <int, int>  parent(pair <int, int> posn){
+pair <int, int> parent(pair <int, int> posn){
     for(auto i: closed){
         if(i -> position == posn){
             return i -> parent->position;
